@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import TosterContext from "@/app/context/TosterContext";
+import AuthContent from "./context/AuthContent";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,7 +19,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className="flex-grow flex-1">{children}</div></body>
+        <AuthContent>
+          <TosterContext />
+          {children}
+        </AuthContent>
+      </body>
     </html>
   );
 }

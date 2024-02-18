@@ -1,16 +1,31 @@
 "use client";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
-
+import axios from "axios";
 import CardWrapper from "./Login-Wrapper";
 import Input from "./Input";
 import Button from "./Button";
+import toast from "react-hot-toast";
+import { signIn, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 type Variant = "LOGIN" | "REGISTER";
 
 const LoginForm = () => {
+    const session = useSession();
     const [isLoading, setisLoading] = useState(false);
     const [variant, setVariant] = useState<Variant>("LOGIN");
+
+    const router = useRouter()
+
+
+    useEffect(() => {
+        if (session?.status === 'authenticated') {
+            router.push('/users');
+        }
+
+    }, [router, session?.status])
+
 
     const toggleVariant = useCallback(() => {
         if (variant === "LOGIN") {
@@ -33,14 +48,40 @@ const LoginForm = () => {
 
     const onSubmit: SubmitHandler<FieldValues> = (data) => {
         setisLoading(true);
-    };
 
+        if (variant === "REGISTER") {
+            axios
+                .post("api/register", data)
+                .then(() => { signIn('credentials', data) })
+                .catch(() => toast.error("something went wrong"))
+                .finally(() => setisLoading(false));
+        }
+
+        if (variant === "LOGIN") {
+            // login with data
+
+            signIn("credentials", {
+                ...data,
+                redirect: false,
+            })
+                .then((callback) => {
+                    if (callback?.error) {
+                        toast.error("Invalid Credentials");
+                    }
+                    if (callback?.ok) {
+                        toast.success("Logged In");
+                        router.push('/users');
+                    }
+                })
+                .finally(() => setisLoading(false));
+        }
+    };
     // const socialAction = (action: string) => {
     //     setisLoading(true)
     // }
 
     return (
-        <CardWrapper showSocial>
+        <CardWrapper toggleVariant={toggleVariant} showSocial>
             <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
                 {variant === "REGISTER" && (
                     <Input

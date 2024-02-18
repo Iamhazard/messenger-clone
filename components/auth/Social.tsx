@@ -3,15 +3,17 @@
 import { FcGoogle } from "react-icons/fc";
 import { Button } from "../ui/button";
 import { AiOutlineApple } from "react-icons/ai";
-
-
+import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 
 export const Social = () => {
     const params = useSearchParams();
     const callbackUrl = params.get("callbackUrl");
     const onClick = (provider: "google" | "apple") => {
+        signIn(provider, {
+            callbackUrl: callbackUrl || '',
 
+        });
     };
 
     return (
