@@ -6,7 +6,7 @@ import { Conversation, Message, User } from "@prisma/client";
 import { format } from "date-fns";
 import { useSession } from "next-auth/react";
 import { FullConversationType } from "@/types";
-import { cn } from "@/lib/utils";
+import { cn } from "@/app/lib/utils";
 import Avatar from "@/components/Avatar";
 import useOtherUser from "@/app/hooks/useOtherUser";
 import AvatarGroup from "@/components/AvatarGroup";

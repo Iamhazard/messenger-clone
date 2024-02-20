@@ -1,6 +1,7 @@
 import getCurrentUser from "@/app/actions/getCurrentUser";
 import { NextResponse } from "next/server";
-import prisma from "@/lib/prismadb"
+import prisma from "@/app/lib/prismadb"
+import { pusherServer } from "@/app/lib/pusher";
 
 interface IParams {
     conversationId?: string
@@ -64,6 +65,19 @@ export async function POST(
             }
 
         })
+         //update all connections
+
+    await pusherServer.trigger(currentUser.email, 'conversation:update', {
+      id: conversationId,
+      messages: [updatedMessage]
+    });
+
+    // If user has already seen the message, no need to go further
+    if (lastMessage.seenIds.indexOf(currentUser.id) !== -1) {
+      return NextResponse.json(existingConversation);
+    }
+    // Update last message seen
+    await pusherServer.trigger(conversationId!, 'message:update', updatedMessage);
       
         return NextResponse.json(updatedMessage)
 

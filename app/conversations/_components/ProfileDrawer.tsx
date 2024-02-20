@@ -8,6 +8,7 @@ import AvatarGroup from "@/components/AvatarGroup";
 import Avatar from "@/components/Avatar";
 import Modal from "@/components/Modal/Modal";
 import ConfirmModal from "./ConfirmModal";
+import useActiveList from "@/app/hooks/useActiveList";
 
 interface ProfileDrawerProps {
     isOpen: boolean;
@@ -28,6 +29,9 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
         return format(new Date(otherUser.createdAt), "PP");
     }, [otherUser.createdAt]);
 
+    const { members } = useActiveList();
+    const isActive = members.indexOf(otherUser?.email!) !== -1;
+
     const title = useMemo(() => {
         return data.name || otherUser.name;
     }, [data.name, otherUser.name]);
@@ -36,8 +40,8 @@ export const ProfileDrawer: React.FC<ProfileDrawerProps> = ({
         if (data.isGroup) {
             return `${data.users?.length} members`;
         }
-        return "Active";
-    }, [data.isGroup, data.users?.length]);
+        return isActive ? 'Active' : 'Offline';
+    }, [data.isGroup, data.users?.length, isActive]);
 
     return (
 

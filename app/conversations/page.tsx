@@ -2,7 +2,7 @@
 
 import EmptyState from "@/components/EmptyState"
 import useConversation from "../hooks/useConversation"
-import { cn } from "@/lib/utils"
+import { cn } from "@/app/lib/utils"
 
 const Home = () => {
     const { isOpen } = useConversation()
