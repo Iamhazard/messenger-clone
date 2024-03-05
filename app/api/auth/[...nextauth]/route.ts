@@ -48,6 +48,9 @@ export const authOptions: NextAuthOptions = {
           throw new Error('Invalid credentials');
         }
 
+
+         
+ 
         return user;
       }
     })
@@ -59,6 +62,6 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
 }
 
-const handler = NextAuth(authOptions);
+const handler = NextAuth(authOptions) as never;
 
 export { handler as GET, handler as POST };
