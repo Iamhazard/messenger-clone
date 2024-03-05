@@ -4,10 +4,26 @@ import { FcGoogle } from "react-icons/fc";
 import { Button } from "../ui/button";
 import { AiOutlineApple } from "react-icons/ai";
 import { signIn } from "next-auth/react";
-import { Suspense } from 'react'; // Import Suspense
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
 export const Social = () => {
+    const params = useSearchParams();
+    const callbackUrl = params?.get("callbackUrl");
+    const onClick = (provider: "google" | "apple") => {
+        signIn(provider, {
+            callbackUrl: callbackUrl || '',
+
+        });
+    };
+
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <SocialComponent />
+        </Suspense>
+    );
+};
+const SocialComponent = () => {
     const params = useSearchParams();
     const callbackUrl = params?.get("callbackUrl");
     const onClick = (provider: "google" | "apple") => {
@@ -17,7 +33,7 @@ export const Social = () => {
     };
 
     return (
-        <Suspense fallback={<div>Loading...</div>}> {/* Wrap with Suspense */}
+        <div className="flex flex-col items-center w-full gap-4">
             <div className="flex flex-col items-center w-full gap-4">
                 <Button
                     className="w-full max-w-3xl font-bold shadow-sm rounded-3xl py-2 bg-blue-600 text-white flex items-center justify-center transition-all duration-300 ease-in-out focus:outline-none hover:shadow focus:shadow-sm focus:shadow-outline"
@@ -40,6 +56,6 @@ export const Social = () => {
                     <span className="ml-4">Sign in with Apple</span>
                 </Button>
             </div>
-        </Suspense>
+        </div>
     );
 };
